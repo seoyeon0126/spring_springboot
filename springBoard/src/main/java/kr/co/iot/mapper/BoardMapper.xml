@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.iot.model.board.dao.BoardDAO">
+
+<select id="getArticles" resultType="bvo">
+	select * from 
+		(SELECT @rownum:=@rownum+1 as no, num, writer, subject, content, reg_date, 
+			   readcount, lev, step, ref, ip, passwd, email
+		FROM board
+		where (@rownum:=0)=0
+	    order by ref desc, num, step) as rownumtbl
+	   <![CDATA[
+	    where no>=#{startRow} and no <=#{endRow}
+	   ]]>  
+</select>
+
+
+<insert id="writePro" parameterType="bvo">
+	insert into board(num, writer, subject, content,
+		reg_date, ref, ip, passwd, email, step, lev)
+		
+	<if test="num==0 and ref==0">
+		 values(#{newNum}, #{writer}, #{subject}, #{content}, sysdate(),
+		 #{newNum}, #{ip}, #{passwd}, #{email}, #{step}, #{lev})
+	</if>
+	
+	<if test="ref>0">
+		values(#{newNum}, #{writer}, #{subject}, #{content}, sysdate(),
+		 #{ref}, #{ip}, #{passwd}, #{email}, #{step}+1, #{lev}+1)
+	</if>
+	
+	<selectKey keyProperty="newNum" resultType="int" order="BEFORE">
+		select ifnull(max(num)+1,1) as newNum from board	
+	</selectKey>
+</insert>
+<select id="getAllCount" resultType="int">
+	select count(num) from board
+</select>
+<select id="getArticle" parameterType="bvo" resultType="bvo">
+		SELECT num, writer, subject, content, reg_date, 
+			   readcount, lev, step, ref, ip, passwd, email
+		FROM board
+		where num = #{num}
+</select>
+<update id="updateReadCount" parameterType="bvo">
+   update board set
+   readcount = readcount+1
+   where num=#{num}
+</update>
+<delete id="deletePro" parameterType="bvo">
+	delete from board
+	where num =#{num}
+</delete>
+<update id="updatePro" parameterType="bvo">
+	update board set
+	writer=#{writer},
+	subject = #{subject},
+	content = #{content},
+	email = #{email},
+	passwd = #{passwd},
+	ip = #{ip},
+	reg_date = sysdate()
+	where num = #{num} 
+</update>
+
+
+
+</mapper>

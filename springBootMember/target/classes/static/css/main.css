@@ -1,0 +1,24 @@
+@charset "UTF-8";
+
+* {
+	margin: auto;
+/* 	font-family: 카페24 당당해; */
+	font-weight: normal;
+	text-decoration: none;
+}
+
+table {
+	text-align: center;
+	width: 600px;
+	border: 1px solid gray;
+}
+
+td {
+	padding: 5px;
+	text-align: left;
+}
+
+th {
+	width: 300px;
+	padding: 1em;
+}

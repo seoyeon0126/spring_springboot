@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iot.dao.MemberDAO">
+<select id="idCheck" parameterType="mvo" resultType="int">
+	select count(id) from member where id = #{id}
+</select>
+<insert id="registerProc" parameterType="mvo">
+insert into member( id , pass , name , email , tel ,
+	 zipcode , address , address2)
+values(
+	#{id} , #{pass} , #{name} , #{email} , #{tel} ,
+	#{zipcode} , #{address} , #{address2})
+</insert>
+
+<select id="memberList" resultType="mvo" parameterType="mvo">
+	select id, pass, name, email, tel, zipcode, address, address2
+	from member
+	<if test="id!=null">	<!-- for on record -->
+	where id= #{id}
+	</if>
+</select>
+<update id="updateProc" parameterType="mvo">
+	update member set 
+		pass      =#{pass}   	     
+		,email    =#{email}
+		,tel      =#{tel}
+		,zipcode  =#{zipcode}
+		,address  =#{address}
+		,address2 =#{address2}
+	where id = #{id}          
+</update>
+<delete id="deletePro" parameterType="mvo">
+	delete from member
+	where id=#{id}
+</delete>
+</mapper>
